@@ -160,3 +160,18 @@ public class Program
     }
 }
 ```
+-Database Query #1-
+```
+SELECT COUNT(Field1), Field2
+FROM Table1
+GROUP BY Field2
+HAVING COUNT(Field1) > 1
+ORDER BY COUNT(Field1) ASC;
+```
+-Database Query #2-
+```
+SELECT TableB.field
+FROM TableA
+Right JOIN TableB ON TableA.id = TableB.id
+WHERE TableA.field IS NULL;
+```
