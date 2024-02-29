@@ -16,7 +16,7 @@ public class BillServices
 
     public IEnumerable<Bill> GetAllBill()
     {
-        var bills = _billRepository.GetAll();
+        var bills = _billRepository.GetAll().OrderBy(b => b.DueDate);
 
         if (!bills.Any()) return Enumerable.Empty<Bill>();
 
@@ -100,6 +100,13 @@ public class BillServices
         return _billRepository.Delete(bill);
     }
 
+
+    /* Query DB total undue & overdue pada tanggal 25 Mar 23
+        SELECT
+            COUNT(CASE WHEN due_date > '2023-03-25' THEN 1 END) AS Undue,
+            COUNT(CASE WHEN due_date <= '2023-03-25' THEN 1 END) AS Overdue
+        FROM bill;
+    */
     public TotalDueDTO CheckDue(DateTime dateNow)
     {
         var allBills = _billRepository.GetAll();
@@ -123,6 +130,8 @@ public class BillServices
             .OrderBy(b => b.DueDate)
             .ToList();
 
+        var payment = data.PaymentAmount;
+
         int latestPaymentCounter = _billRepository.GetLatestPaymentCounter();
 
         foreach (var bill in bills)
@@ -131,7 +140,7 @@ public class BillServices
             {
                 decimal remainingAmount = Math.Max(0, bill.BillAmount.Value - data.PaymentAmount);
 
-                if (data.PaymentAmount == bill.BillAmount)
+                if (bill.PaymentAmount == bill.BillAmount)
                 {
                     break;
                 }
@@ -147,7 +156,7 @@ public class BillServices
 
                 data.PaymentAmount -= bill.PaymentAmount.Value;
 
-                bill.PaymentNo = "Payment#" + (latestPaymentCounter + 1);
+                bill.PaymentNo = data.PaymentNo;
 
                 bill.PaymentDate = data.PaymentDate;
 
@@ -158,9 +167,9 @@ public class BillServices
 
         return new PayBillDTO
         {
-            PaymentNo = "Payment#" + (latestPaymentCounter + 1),
+            PaymentNo = data.PaymentNo,
             PaymentDate = data.PaymentDate,
-            PaymentAmount = data.PaymentAmount
+            PaymentAmount = payment
         };
     }
 
@@ -189,7 +198,7 @@ public class BillServices
                 lateTime = _billRepository.CalculateLateTime(bill.DueDate, bill.PaymentDate);
             }
 
-            decimal overdue = (bill.PaymentAmount.HasValue && bill.BillAmount.HasValue)
+            decimal overdue = (bill.PaymentAmount.HasValue && bill.BillAmount.HasValue && bill.BillAmount > bill.PaymentAmount)
             ? (bill.PaymentAmount.Value >= bill.BillAmount.Value)
                 ? 0
                 : (bill.BillAmount.Value - bill.PaymentAmount.Value)

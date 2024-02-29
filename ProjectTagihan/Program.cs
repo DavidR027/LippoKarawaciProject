@@ -18,16 +18,32 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BillDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("Database"), new MySqlServerVersion(new Version(8, 0, 21))));
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("https://localhost:7206")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    var swaggerJsonBasePath = string.IsNullOrWhiteSpace(c.RoutePrefix) ? "." : "..";
+    c.SwaggerEndpoint($"{swaggerJsonBasePath}/swagger/v1/swagger.json", "Tagihan API");
+    c.DefaultModelsExpandDepth(-1);
+    c.InjectStylesheet("/Content/css/swagger-mycustom.css");
+    c.DocumentTitle = "Tagihan API";
+});
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthentication();
 

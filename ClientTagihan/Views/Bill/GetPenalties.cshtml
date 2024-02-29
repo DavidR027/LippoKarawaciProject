@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ClientTagihan.Models.Penalty>
+
+@{
+    ViewData["Title"] = "GetPenalties";
+}
+
+<h1>Penalties</h1>
+
+<form method="get" action="@Url.Action("GetPenalties", "Bill")">
+    <label for="dateNow">Select Date:</label>
+    <input type="date" id="dateNow" name="dateNow" required>
+    <button type="submit">Show Penalties</button>
+</form>
+
+@if (Model.Any())
+{
+    <table id="penaltyTable">
+        <thead>
+            <tr>
+                <th>Tagihan No</th>
+                <th>Penalty No</th>
+                <th>Overdue</th>
+                <th>Late Time</th>
+                <th>Penalty Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var penalty in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(model => penalty.TagihanNo)</td>
+                    <td>@Html.DisplayFor(model => penalty.PenaltyNo)</td>
+                    <td>@Html.DisplayFor(model => penalty.Overdue)</td>
+                    <td>@Html.DisplayFor(model => penalty.LateTime)</td>
+                    <td>@Html.DisplayFor(model => penalty.PenaltyAmount)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#penaltyTable').DataTable();
+        });
+    </script>
+    }
+}
+else
+{
+    <p>No penalties found for the selected date.</p>
+}

@@ -1,7 +1,12 @@
+using ClientTagihan.Repositories.Data;
+using ClientTagihan.Repositories.Interface;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped(typeof(IGeneralRepository<,>), typeof(GeneralRepository<,>));
+builder.Services.AddScoped<IBillRepository, BillRepository>();
 
 var app = builder.Build();
 
@@ -13,11 +18,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseCors(options => { options.AllowAnyOrigin(); options.AllowAnyHeader(); options.AllowAnyMethod(); });
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

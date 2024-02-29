@@ -174,7 +174,7 @@ public class BillController : ControllerBase
         }
     }
 
-    [HttpGet("Penalties")]
+    [HttpGet("Penalties/{dateNow}")]
     public IActionResult GetPenalties(DateTime dateNow)
     {
         try
