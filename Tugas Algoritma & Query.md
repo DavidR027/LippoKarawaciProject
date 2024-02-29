@@ -1,6 +1,6 @@
 # Jawaban Algoritma dan Database Query
 -Algoritma #1-
-
+```
 using System;
 					
 public class Program
@@ -26,9 +26,9 @@ public class Program
 		Console.Write("Total: "+total);
 	}
 }
-
+```
 -Algoritma #2 A-
-
+```
 public class Program
 {
 	public static void Main()
@@ -47,9 +47,9 @@ public class Program
         }
 	}
 }
-
+```
 -Algoritma #2 B-
-
+```
 public class Program
 {
 	public static void Main()
@@ -68,9 +68,9 @@ public class Program
         }
 	}
 }
-
+```
 -Algoritma #2 C-
-
+```
 using System;
 
 public class Program
@@ -110,3 +110,53 @@ public class Program
         }
     }
 }
+```
+-Algoritma #2 D-
+```
+using System;
+
+public class Program
+{
+    public static void Main()
+    {
+        Console.Write("Masukkan nilai n: ");
+        int nilai = Convert.ToInt32(Console.ReadLine());
+
+        int[,] matrix = new int[nilai, nilai];
+        int currentNumber = 1;
+        bool isAscending = true;
+        int row = 0;
+
+        for (int i = 0; i < nilai; i++)
+        {
+            if (isAscending)
+            {
+                for (int j = 0; j < nilai; j++)
+                {
+                    matrix[j, row] = currentNumber++;
+                }
+                isAscending = false;
+            }
+            else
+            {
+                for (int j = nilai - 1; j >= 0; j--)
+                {
+                    matrix[j, row] = currentNumber++;
+                }
+                isAscending = true;
+            }
+            row++;
+        }
+
+        
+        for (int i = 0; i < nilai; i++)
+        {
+            for (int j = 0; j < nilai; j++)
+            {
+                Console.Write(matrix[i, j] + "\t");
+            }
+            Console.WriteLine();
+        }
+    }
+}
+```
